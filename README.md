@@ -1,6 +1,6 @@
 # AI-Enabled-Visa-Status-Prediction-and-Processing-Time-Estimator
 
-Module 1 — Data Loading & Pre-Processing (Layman Explanation)
+Module 1 — Data Loading & Pre-Processing 
 
 This module prepares the raw visa dataset so it can be used for machine learning.
 
