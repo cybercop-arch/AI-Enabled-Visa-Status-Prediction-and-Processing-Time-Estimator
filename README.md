@@ -8,5 +8,5 @@ This module prepares the raw visa dataset so it can be used for machine learning
 - Converted date columns into proper datetime format  
 - Calculated visa processing time in days  
 - Converted text columns into numeric one-hot encoded columns
--  
+  
 This cleaned the data and made it ready for machine learning
