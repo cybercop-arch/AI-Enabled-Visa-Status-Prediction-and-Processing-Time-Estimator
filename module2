@@ -1,0 +1,48 @@
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+from datetime import datetime
+data = pd.read_csv(r"C:\Users\samik\Downloads\visa_dataset.csv")
+df = pd.DataFrame(data)
+df["application_date"] = pd.to_datetime(df["application_date"])
+df["decision_date"] = pd.to_datetime(df["decision_date"])
+df["processing_days"] = (df["decision_date"] - df["application_date"]).dt.days
+df_encoded = pd.get_dummies(df, columns=["country","visa_type"])
+print(df["processing_days"].describe())
+sns.histplot(df["processing_days"], kde=True)
+plt.title("Distribution of Visa Processing Days")
+plt.xlabel("Processing Days")
+plt.ylabel("count")
+plt.show()
+sns.boxplot(x=df["processing_days"])
+plt.title("Boxplot of Processing Days")
+plt.show()
+df["application_month"] = df["application_date"].dt.month
+corr_matrix = df[["processing_days", "application_month"]].corr()
+print(corr_matrix)
+sns.heatmap(corr_matrix, annot=True, cmap="coolwarm")
+plt.title("Correlation Heatmap")
+plt.show()
+sns.scatterplot(
+    x="application_month",
+    y="processing_days",
+    data=df
+)
+plt.title("Processing Days vs Application Month")
+plt.show()
+
+print(df[["application_date", "application_month"]])
+df['season']=df["application_month"].apply(
+    lambda x: "Peak" if x in [1,2,3,12] else "off-peak"
+)
+print(df[["application_month", "season"]])
+
+country_avg = df.groupby("country")["processing_days"].mean()
+print(country_avg)
+
+df["country_avg"] = df["country"].map(country_avg)
+
+visa_avg = df.groupby("visa_type")["processing_days"].mean()
+df["visa_avg"] = df["visa_type"].map(visa_avg)
+print(df)
