@@ -10,3 +10,5 @@ This module prepares the raw visa dataset so it can be used for machine learning
 - Converted text columns into numeric one-hot encoded columns
   
 This cleaned the data and made it ready for machine learning
+
+Module 2 - 
