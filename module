@@ -9,6 +9,8 @@ from sklearn.metrics import mean_absolute_error, mean_squared_error
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.ensemble import GradientBoostingRegressor
 from sklearn.metrics import r2_score
+from sklearn.model_selection import GridSearchCV
+
 
 data = pd.read_csv(r"C:\Users\samik\Downloads\visa_dataset.csv")
 df = pd.DataFrame(data)
@@ -79,22 +81,37 @@ print("Linear Regression R2 :", r2_score(y_test, y_pred))
 
 #testing with random forest
 
-rf_model = RandomForestRegressor(
-    n_estimators=200,
-    random_state=42
+rf = RandomForestRegressor(random_state=42)
+
+rf_param_grid = {
+    "n_estimators": [100, 200, 300],
+    "max_depth": [None, 10, 20],
+    "min_samples_split": [2, 5],
+    "min_samples_leaf": [1, 2]
+}
+
+rf_grid = GridSearchCV(
+    estimator=rf,
+    param_grid=rf_param_grid,
+    cv=5,
+    scoring="neg_mean_absolute_error",
+    n_jobs=-1
 )
 
-rf_model.fit(x_train, y_train)
+rf_grid.fit(x_train, y_train)
 
-rf_y_pred = rf_model.predict(x_test)
+best_rf = rf_grid.best_estimator_
+
+rf_y_pred = best_rf.predict(x_test)
 
 rf_mae = mean_absolute_error(y_test, rf_y_pred)
 rf_rmse = np.sqrt(mean_squared_error(y_test, rf_y_pred))
+rf_r2 = r2_score(y_test, rf_y_pred)
 
-print("Random Forest MAE :", rf_mae)
-print("Random Forest RMSE :", rf_rmse)
-
-print("Random Forest R2 :", r2_score(y_test, rf_y_pred))
+print("Best Random Forest Parameters:", rf_grid.best_params_)
+print("Tuned Random Forest MAE:", rf_mae)
+print("Tuned Random Forest RMSE:", rf_rmse)
+print("Tuned Random Forest R2:", rf_r2)
 
 
 #Gradient Boosting
@@ -119,15 +136,28 @@ print("Gradient Boosting R2 :", r2_score(y_test, gb_y_pred))
 #Model comparison using MAE, RMSE, R² score
 
 results = pd.DataFrame({
-    "Model": ["Linear Regression", "Random Forest", "Gradient Boosting"],
-    "MAE": [mae, rf_mae, gb_mae],
-    "RMSE": [rmse, rf_rmse, gb_rmse],
+    "Model": [
+        "Linear Regression (Baseline)",
+        "Random Forest (Tuned)",
+        "Gradient Boosting (Baseline)"
+    ],
+    "MAE": [
+        mae,
+        rf_mae,
+        gb_mae
+    ],
+    "RMSE": [
+        rmse,
+        rf_rmse,
+        gb_rmse
+    ],
     "R2 Score": [
         r2_score(y_test, y_pred),
-        r2_score(y_test, rf_y_pred),
+        rf_r2,
         r2_score(y_test, gb_y_pred)
     ]
 })
 
 print(results)
+
 
