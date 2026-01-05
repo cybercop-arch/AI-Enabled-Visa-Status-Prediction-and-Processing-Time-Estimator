@@ -79,7 +79,28 @@ print(" Linear Regression RMSE : ", rmse)
 
 print("Linear Regression R2 :", r2_score(y_test, y_pred))
 
-#testing with random forest
+#Random Forest 
+
+rf_model = RandomForestRegressor(
+    n_estimators=200,
+    random_state=42
+)
+
+rf_model.fit(x_train, y_train)
+
+rf_y_pred = rf_model.predict(x_test)
+
+rf_mae = mean_absolute_error(y_test, rf_y_pred)
+rf_rmse = np.sqrt(mean_squared_error(y_test, rf_y_pred))
+rf_r2 = r2_score(y_test, rf_y_pred)
+
+print("Random Forest MAE :", rf_mae)
+print("Random Forest RMSE :", rf_rmse)
+
+print("Random Forest R2 :", rf_r2)
+
+
+#Fine tuning random forest model
 
 rf = RandomForestRegressor(random_state=42)
 
@@ -87,7 +108,8 @@ rf_param_grid = {
     "n_estimators": [100, 200, 300],
     "max_depth": [None, 10, 20],
     "min_samples_split": [2, 5],
-    "min_samples_leaf": [1, 2]
+    "min_samples_leaf": [1, 2],
+    "max_features": ["sqrt", "log2"]
 }
 
 rf_grid = GridSearchCV(
@@ -104,34 +126,16 @@ best_rf = rf_grid.best_estimator_
 
 rf_y_pred = best_rf.predict(x_test)
 
-rf_mae = mean_absolute_error(y_test, rf_y_pred)
-rf_rmse = np.sqrt(mean_squared_error(y_test, rf_y_pred))
-rf_r2 = r2_score(y_test, rf_y_pred)
+tuned_rf_mae = mean_absolute_error(y_test, rf_y_pred)
+tuned_rf_rmse = np.sqrt(mean_squared_error(y_test, rf_y_pred))
+tuned_rf_r2 = r2_score(y_test, rf_y_pred)
 
 print("Best Random Forest Parameters:", rf_grid.best_params_)
-print("Tuned Random Forest MAE:", rf_mae)
-print("Tuned Random Forest RMSE:", rf_rmse)
-print("Tuned Random Forest R2:", rf_r2)
+print("Tuned Random Forest MAE:", tuned_rf_mae)
+print("Tuned Random Forest RMSE:", tuned_rf_rmse)
+print("Tuned Random Forest R2:", tuned_rf_r2)
 
 
-#Gradient Boosting
-
-gb_model = GradientBoostingRegressor(
-    n_estimators=200,
-    learning_rate=0.1,
-    random_state=42
-)
-
-gb_model.fit(x_train, y_train)
-gb_y_pred = gb_model.predict(x_test)
-
-gb_mae = mean_absolute_error(y_test, gb_y_pred)
-gb_rmse = np.sqrt(mean_squared_error(y_test, gb_y_pred))
-
-print("Gradient Boosting MAE : ", gb_mae)
-print("Gradient Boosting RMSE : ", gb_rmse)
-
-print("Gradient Boosting R2 :", r2_score(y_test, gb_y_pred))
 
 #Model comparison using MAE, RMSE, R² score
 
@@ -139,22 +143,23 @@ results = pd.DataFrame({
     "Model": [
         "Linear Regression (Baseline)",
         "Random Forest (Tuned)",
-        "Gradient Boosting (Baseline)"
+        "Random Forest (Baseline)"
     ],
     "MAE": [
         mae,
+        tuned_rf_mae,
         rf_mae,
-        gb_mae
     ],
     "RMSE": [
         rmse,
+        tuned_rf_rmse,
         rf_rmse,
-        gb_rmse
+       
     ],
     "R2 Score": [
         r2_score(y_test, y_pred),
-        rf_r2,
-        r2_score(y_test, gb_y_pred)
+        tuned_rf_r2,
+        rf_r2 
     ]
 })
 
