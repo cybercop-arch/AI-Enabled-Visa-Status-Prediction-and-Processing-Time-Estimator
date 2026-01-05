@@ -25,3 +25,14 @@ This module analyzes visa processing time patterns and extracts meaningful insig
 
 This analysis provided insights into trends, variability, and factors affecting visa processing time
 
+Module 3 - Predictive Modeling
+
+This module builds and evaluates machine learning models to predict visa processing time.
+
+- Trained regression models (Linear Regression(Baseline), Random Forest(Baseline), Random Forest(Tuned))
+- Tuned Random Forest hyperparameters using GridSearchCV for optimal performance
+- Compared models using evaluation metrics (MAE, RMSE, R² score)
+- Examined the results and selected the best model for visa processing dataset.
+
+This provided a reliable model to estimate visa processing durations, facilitating better planning and decision-making.
+
