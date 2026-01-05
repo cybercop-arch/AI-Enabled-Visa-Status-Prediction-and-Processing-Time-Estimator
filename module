@@ -116,3 +116,18 @@ print("Gradient Boosting RMSE : ", gb_rmse)
 
 print("Gradient Boosting R2 :", r2_score(y_test, gb_y_pred))
 
+#Model comparison using MAE, RMSE, R² score
+
+results = pd.DataFrame({
+    "Model": ["Linear Regression", "Random Forest", "Gradient Boosting"],
+    "MAE": [mae, rf_mae, gb_mae],
+    "RMSE": [rmse, rf_rmse, gb_rmse],
+    "R2 Score": [
+        r2_score(y_test, y_pred),
+        r2_score(y_test, rf_y_pred),
+        r2_score(y_test, gb_y_pred)
+    ]
+})
+
+print(results)
+
