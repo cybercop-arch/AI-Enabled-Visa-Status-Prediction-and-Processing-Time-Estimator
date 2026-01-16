@@ -17,6 +17,8 @@ df = pd.DataFrame(data)
 df["application_date"] = pd.to_datetime(df["application_date"])
 df["decision_date"] = pd.to_datetime(df["decision_date"])
 df["processing_days"] = (df["decision_date"] - df["application_date"]).dt.days
+df["application_month"] = df["application_date"].dt.month
+
 df_encoded = pd.get_dummies(df, columns=["country","visa_type"])
 
 print(df["processing_days"].describe())
@@ -28,7 +30,6 @@ plt.show()
 sns.boxplot(x=df["processing_days"])
 plt.title("Boxplot of Processing Days")
 plt.show()
-df["application_month"] = df["application_date"].dt.month
 corr_matrix = df[["processing_days", "application_month"]].corr()
 print(corr_matrix)
 sns.heatmap(corr_matrix, annot=True, cmap="coolwarm")
@@ -164,5 +165,57 @@ results = pd.DataFrame({
 })
 
 print(results)
+
+import joblib
+
+joblib.dump(model, "visa_processing_model.pkl")
+
+import pandas as pd
+
+trained_model = joblib.load("visa_processing_model.pkl")
+
+
+# prediction logic
+def predict_processing_time(
+    country,
+    visa_type,
+    application_month,
+    age,
+    travel_history_count
+):
+    # Create input with EXACT training feature order
+    input_data = pd.DataFrame(
+        0,
+        index=[0],
+        columns=trained_model.feature_names_in_
+    )
+
+    # Numerical features
+    input_data["age"] = age
+    input_data["travel_history_count"] = travel_history_count
+    input_data["application_month"] = application_month
+
+    # Country one-hot
+    country_col = f"country_{country}"
+    if country_col in input_data.columns:
+        input_data[country_col] = 1
+
+    # Visa type one-hot
+    visa_col = f"visa_type_{visa_type}"
+    if visa_col in input_data.columns:
+        input_data[visa_col] = 1
+
+    predicted_days = trained_model.predict(input_data)
+    return int(round(predicted_days[0]))
+
+result = predict_processing_time(
+    country="India",
+    visa_type="Tourist",
+    application_month=2,
+    age=28,
+    travel_history_count=3
+)
+
+print("Predicted processing days:", result)
 
 
