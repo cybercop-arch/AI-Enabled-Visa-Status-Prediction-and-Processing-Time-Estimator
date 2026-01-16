@@ -218,4 +218,25 @@ result = predict_processing_time(
 
 print("Predicted processing days:", result)
 
+import streamlit as st
+
+st.title("Visa Processing Time Estimator")
+
+st.write("Estimate Visa Processing Time using AI-Based Predictions")
+
+country = st.selectbox(
+    "Select Applicant Country",
+    ["India", "USA", "UK", "Canada", "Australia","Brazil","Germany","France","Italy","Spain","China","Japan"]
+)
+
+visa_type = st.selectbox(
+    "Select Visa Type",
+    ["Tourist", "Student", "Work", "Business"]
+)
+application_month = st.slider(
+    "Select Application Month",
+    main_value=1,
+    max_value=12,
+    value=1
+)
 
