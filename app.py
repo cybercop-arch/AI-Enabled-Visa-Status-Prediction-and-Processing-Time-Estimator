@@ -93,7 +93,6 @@ travel_history_count = st.number_input(
 )
 
 # PREDICTION ACTION
-# PREDICTION ACTION
 if st.button("Predict Processing Time"):
     try:
         predicted_days = predict_processing_time(
@@ -113,6 +112,7 @@ if st.button("Predict Processing Time"):
         if "prediction_history" not in st.session_state:
             st.session_state.prediction_history = []
 
+        # Button ONLY saves data
         if st.button("Save Prediction to History"):
             st.session_state.prediction_history.append({
                 "Country": country,
@@ -123,6 +123,7 @@ if st.button("Predict Processing Time"):
                 "Predicted Processing Days": predicted_days
             })
             st.success("Prediction saved successfully")
+
 
         if st.session_state.prediction_history:
             st.subheader("Past Visa Processing Predictions")
