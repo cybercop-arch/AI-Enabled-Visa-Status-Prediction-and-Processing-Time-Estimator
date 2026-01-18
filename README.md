@@ -36,3 +36,6 @@ This module builds and evaluates machine learning models to predict visa process
 
 This provided a reliable model to estimate visa processing durations, facilitating better planning and decision-making.
 
+Module 4 - 
+
+Deployed URL - https://ai-enabled-visa-status-prediction-and-processing-time-estimator.streamlit.app/
