@@ -92,18 +92,14 @@ travel_history_count = st.number_input(
     value=2
 )
 
-# -------------------------------
 # SESSION STATE INITIALIZATION
-# -------------------------------
 if "prediction_history" not in st.session_state:
     st.session_state.prediction_history = []
 
 if "last_prediction" not in st.session_state:
     st.session_state.last_prediction = None
 
-# -------------------------------
 # PREDICT BUTTON
-# -------------------------------
 if st.button("Predict Processing Time"):
     try:
         predicted_days = predict_processing_time(
@@ -124,9 +120,7 @@ if st.button("Predict Processing Time"):
         st.error("Prediction failed. Check model compatibility.")
         st.exception(e)
 
-# -------------------------------
 # SAVE BUTTON (independent)
-# -------------------------------
 if st.session_state.last_prediction is not None:
     if st.button("Save Prediction to History"):
         st.session_state.prediction_history.append({
@@ -139,9 +133,7 @@ if st.session_state.last_prediction is not None:
         })
         st.success("Prediction saved successfully")
 
-# -------------------------------
 # ALWAYS SHOW HISTORY & CHARTS
-# -------------------------------
 if st.session_state.prediction_history:
     st.subheader("Past Visa Processing Predictions")
 

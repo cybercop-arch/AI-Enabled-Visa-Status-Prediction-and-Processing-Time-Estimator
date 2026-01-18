@@ -36,6 +36,16 @@ This module builds and evaluates machine learning models to predict visa process
 
 This provided a reliable model to estimate visa processing durations, facilitating better planning and decision-making.
 
-Module 4 - 
+Module 4 - Web Application Development & Deployment
+
+This module focuses on transforming the trained machine learning model into a usable, end-to-end web application.
+
+- Developed an interactive frontend using Streamlit with a user-friendly input form
+- Integrated the backend prediction engine to generate real-time visa processing time estimates
+- Implemented input validation and error handling for reliable predictions
+- Deployed the application on a cloud platform (Streamlit Community Cloud)
+- Performed end-to-end testing using multiple sample scenarios
+
+This enabled users to estimate visa processing time through a fully deployed, production-ready web application.
 
 Deployed URL - https://ai-enabled-visa-status-prediction-and-processing-time-estimator.streamlit.app/
