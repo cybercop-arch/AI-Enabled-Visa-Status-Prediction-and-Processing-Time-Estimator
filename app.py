@@ -92,7 +92,18 @@ travel_history_count = st.number_input(
     value=2
 )
 
-# PREDICTION ACTION
+# -------------------------------
+# SESSION STATE INITIALIZATION
+# -------------------------------
+if "prediction_history" not in st.session_state:
+    st.session_state.prediction_history = []
+
+if "last_prediction" not in st.session_state:
+    st.session_state.last_prediction = None
+
+# -------------------------------
+# PREDICT BUTTON
+# -------------------------------
 if st.button("Predict Processing Time"):
     try:
         predicted_days = predict_processing_time(
@@ -103,45 +114,47 @@ if st.button("Predict Processing Time"):
             travel_history_count
         )
 
+        st.session_state.last_prediction = predicted_days
+
         st.success(
             f"Estimated Visa Processing Time: {predicted_days} days"
         )
 
-        # Initialize session state for history
-
-        if "prediction_history" not in st.session_state:
-            st.session_state.prediction_history = []
-
-        # Button ONLY saves data
-        if st.button("Save Prediction to History"):
-            st.session_state.prediction_history.append({
-                "Country": country,
-                "Visa Type": visa_type,
-                "Application Month": application_month,
-                "Age": age,
-                "Travel History": travel_history_count,
-                "Predicted Processing Days": predicted_days
-            })
-            st.success("Prediction saved successfully")
-
-
-        if st.session_state.prediction_history:
-            st.subheader("Past Visa Processing Predictions")
-
-            history_df = pd.DataFrame(st.session_state.prediction_history)
-            st.dataframe(history_df)
-
-            st.subheader("Processing Time Trend")
-            st.line_chart(history_df["Predicted Processing Days"])
-
-            csv = history_df.to_csv(index=False).encode("utf-8")
-            st.download_button(
-                label="Download Prediction History",
-                data=csv,
-                file_name="visa_processing_history.csv",
-                mime="text/csv"
-            )
-
     except Exception as e:
         st.error("Prediction failed. Check model compatibility.")
         st.exception(e)
+
+# -------------------------------
+# SAVE BUTTON (independent)
+# -------------------------------
+if st.session_state.last_prediction is not None:
+    if st.button("Save Prediction to History"):
+        st.session_state.prediction_history.append({
+            "Country": country,
+            "Visa Type": visa_type,
+            "Application Month": application_month,
+            "Age": age,
+            "Travel History": travel_history_count,
+            "Predicted Processing Days": st.session_state.last_prediction
+        })
+        st.success("Prediction saved successfully")
+
+# -------------------------------
+# ALWAYS SHOW HISTORY & CHARTS
+# -------------------------------
+if st.session_state.prediction_history:
+    st.subheader("Past Visa Processing Predictions")
+
+    history_df = pd.DataFrame(st.session_state.prediction_history)
+    st.dataframe(history_df)
+
+    st.subheader("Processing Time Trend")
+    st.line_chart(history_df["Predicted Processing Days"])
+
+    csv = history_df.to_csv(index=False).encode("utf-8")
+    st.download_button(
+        label="Download Prediction History",
+        data=csv,
+        file_name="visa_processing_history.csv",
+        mime="text/csv"
+    )
