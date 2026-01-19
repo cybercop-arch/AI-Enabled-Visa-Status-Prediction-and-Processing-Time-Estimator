@@ -1,6 +1,20 @@
 import streamlit as st
 import pandas as pd
 import joblib
+import os
+
+HISTORY_FILE = "prediction_history.csv"
+
+def load_history():
+    if os.path.exists(HISTORY_FILE):
+        return pd.read_csv(HISTORY_FILE)
+    return pd.DataFrame()
+
+def save_history(df):
+    df.to_csv(HISTORY_FILE, index=False)
+
+if "prediction_history" not in st.session_state:
+    st.session_state.prediction_history = load_history()
 
 # Page configuration
 st.set_page_config(
@@ -123,15 +137,27 @@ if st.button("Predict Processing Time"):
 # SAVE BUTTON (independent)
 if st.session_state.last_prediction is not None:
     if st.button("Save Prediction to History"):
-        st.session_state.prediction_history.append({
+        new_row = {
             "Country": country,
             "Visa Type": visa_type,
             "Application Month": application_month,
             "Age": age,
             "Travel History": travel_history_count,
             "Predicted Processing Days": st.session_state.last_prediction
-        })
-        st.success("Prediction saved successfully")
+        }
+
+        st.session_state.prediction_history = pd.concat(
+            [
+                st.session_state.prediction_history,
+                pd.DataFrame([new_row])
+            ],
+            ignore_index=True
+        )
+
+        save_history(st.session_state.prediction_history)
+
+        st.success("Prediction saved permanently")
+
 
 # ALWAYS SHOW HISTORY & CHARTS
 if st.session_state.prediction_history:
@@ -150,3 +176,16 @@ if st.session_state.prediction_history:
         file_name="visa_processing_history.csv",
         mime="text/csv"
     )
+
+if not st.session_state.prediction_history.empty:
+    st.subheader("Past Visa Processing Predictions")
+
+    st.dataframe(st.session_state.prediction_history)
+
+    st.subheader("Processing Time Trend")
+    st.line_chart(
+        st.session_state.prediction_history["Predicted Processing Days"]
+    )
+    csv = st.session_state.prediction_history.to_csv(
+        index=False
+    ).encode("utf-8")
